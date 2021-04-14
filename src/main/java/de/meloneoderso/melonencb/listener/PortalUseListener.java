@@ -34,9 +34,9 @@ public class PortalUseListener implements Listener {
                 @Override
                 public void run() {
                     if (event.getLocation().getWorld().getName().equalsIgnoreCase("world_nether")) {
-                        event.getEntity().teleport(MelonenCB.plotWorld.getSpawnLocation());
+                        event.getEntity().teleport(MelonenCB.plotWorld.getSpawnLocation().clone().add(.5, 0, .5));
                     } else {
-                        event.getEntity().teleport(Bukkit.getWorld("world_nether").getSpawnLocation());
+                        event.getEntity().teleport(Bukkit.getWorld("world_nether").getSpawnLocation().clone().add(.5, 0, .5));
                     }
                 }
             }.runTaskLater(MelonenCB.getInstance(), event.getEntity() instanceof Player &&
