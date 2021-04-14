@@ -1,0 +1,14 @@
+name: MelonenCB
+version: ${project.version}
+main: de.meloneoderso.melonencb.MelonenCB
+api-version: 1.16
+authors: [ MELONEODERSO ]
+description: CBsystem
+depend:
+  - Essentials
+commands:
+  reset:
+  loadconfig:
+  createspawn:
+
+
