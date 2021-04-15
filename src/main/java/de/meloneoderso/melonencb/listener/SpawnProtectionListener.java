@@ -5,6 +5,7 @@
 
 package de.meloneoderso.melonencb.listener;
 
+import de.meloneoderso.melonencb.Constants;
 import de.meloneoderso.melonencb.MelonenCB;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,14 +23,21 @@ public class SpawnProtectionListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.hasPermission("melonencb.ignorespawnprot")) return;
-        event.setCancelled(shouldCancel(event.getBlock().getLocation()));
+        if (shouldCancel(event.getBlock().getLocation())) {
+            p.sendMessage(Constants.PREFIX + "§7Du bist noch §b" + distance(event.getBlock().getLocation()) + " Blöcke §7vom Ende des Spawns entfernt!");
+            event.setCancelled(true);
+        }
+
     }
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player p = event.getPlayer();
         if (p.hasPermission("melonencb.ignorespawnprot")) return;
-        event.setCancelled(shouldCancel(event.getBlock().getLocation()));
+        if (shouldCancel(event.getBlock().getLocation())) {
+            p.sendMessage(Constants.PREFIX + "§7Du bist noch §b" + distance(event.getBlock().getLocation()) + " Blöcke §7vom Ende des Spawns entfernt!");
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -65,9 +73,7 @@ public class SpawnProtectionListener implements Listener {
 
     public boolean shouldCancel(Location location) {
         World world = location.getWorld();
-        if (world.getName().equalsIgnoreCase("world2") || world.getName().equalsIgnoreCase("world_nether") ||
-                world.getName().equalsIgnoreCase("world_the_end")) {
-
+        if (world.getName().equalsIgnoreCase("world2") || world.getName().equalsIgnoreCase("world_nether")) {
             Location spawn = world.getSpawnLocation();
             Location blockLoc = location.getBlock().getLocation();
             int minX = spawn.getBlockX() - MelonenCB.getResetConfig().getSpawnRadius();
@@ -78,6 +84,24 @@ public class SpawnProtectionListener implements Listener {
             return blockLoc.getX() >= minX && blockLoc.getX() <= maxX && blockLoc.getZ() >= minZ && blockLoc.getZ() <= maxZ;
         }
         return false;
+    }
+
+    public int distance(Location location) {
+        World world = location.getWorld();
+        if (world.getName().equalsIgnoreCase("world2") || world.getName().equalsIgnoreCase("world_nether")) {
+            Location spawn = world.getSpawnLocation();
+            Location blockLoc = location.getBlock().getLocation();
+            int minX = Math.abs(spawn.getBlockX() - MelonenCB.getResetConfig().getSpawnRadius() - blockLoc.getBlockX());
+            int maxX = Math.abs(spawn.getBlockX() + MelonenCB.getResetConfig().getSpawnRadius() - blockLoc.getBlockX());
+            int minZ = Math.abs(spawn.getBlockZ() - MelonenCB.getResetConfig().getSpawnRadius() - blockLoc.getBlockZ());
+            int maxZ = Math.abs(spawn.getBlockZ() + MelonenCB.getResetConfig().getSpawnRadius() - blockLoc.getBlockZ());
+
+            int distanceX = Math.min(minX, maxX);
+            int distanceZ = Math.min(minZ, maxZ);
+
+            return Math.min(distanceX, distanceZ);
+        }
+        return 0;
     }
 
 }
